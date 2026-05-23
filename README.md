@@ -2,6 +2,8 @@
 
 Persönlicher Tracker für das Spiel **Pokopia** (Nintendo Switch). Die App hilft dabei, den Überblick über alle Pokémon in den verschiedenen Spielwelten zu behalten.
 
+Direkt zur Anwendung: [https://sethiele.github.io/pokopia-tracker](https://sethiele.github.io/pokopia-tracker/)
+
 ---
 
 > [!IMPORTANT]

@@ -81,7 +81,7 @@ export default function App() {
       </div>
 
       <div style={{ textAlign: "center", padding: "20px", fontSize: 12, color: "#bbb" }}>
-        Daten werden lokal im Browser gespeichert · {stats.total} Pokémon in {WORLDS.length} Welten
+        Daten werden lokal im Browser gespeichert · {stats.total} Pokémon in {WORLDS.length} Welten · <a href="https://github.com/sethiele/pokopia-tracker" target="_blank">Zur Anleitung/Code</a>
       </div>
 
       {spritePokemon && (
