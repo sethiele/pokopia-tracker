@@ -181,9 +181,9 @@ export const POKEMON = [
   { id: 224, name: "Feurigel",           worldId: "mooswald",     nationalId: null },
   { id: 225, name: "Igelavar",           worldId: "mooswald",     nationalId: null },
   { id: 226, name: "Tornupto",           worldId: "mooswald",     nationalId: null },
-  { id: 248, name: "Serpifeu",           worldId: "mooswald",     nationalId: null },
-  { id: 249, name: "Efoserp",            worldId: "mooswald",     nationalId: null },
-  { id: 250, name: "Serpiroyal",         worldId: "mooswald",     nationalId: null },
+  { id: 308, name: "Serpifeu",           worldId: "mooswald",     nationalId: null },
+  { id: 309, name: "Efoserp",            worldId: "mooswald",     nationalId: null },
+  { id: 310, name: "Serpiroyal",         worldId: "mooswald",     nationalId: null },
 
   // Neulandia
   { id: 61,  name: "Driftlon",           worldId: "neulandia",    nationalId: null },
@@ -294,7 +294,7 @@ export const POKEMON = [
   { id: 90,  name: "Porenta",            worldId: "legendaer",    nationalId: null },
   { id: 125, name: "Makuhita",           worldId: "legendaer",    nationalId: null },
   { id: 126, name: "Hariyama",           worldId: "legendaer",    nationalId: null },
-  { id: 179, name: "Plaudagei",          worldId: "legendaer",    nationalId: null },
+  { id: 311, name: "Plaudagei",          worldId: "legendaer",    nationalId: null },
   { id: 183, name: "Ignivor",            worldId: "legendaer",    nationalId: null },
   { id: 184, name: "Ramoth",             worldId: "legendaer",    nationalId: null },
   { id: 289, name: "Kyogre",             worldId: "legendaer",    nationalId: null },
