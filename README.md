@@ -16,14 +16,15 @@ Persönlicher Tracker für das Spiel **Pokopia** (Nintendo Switch). Die App hilf
 Der Pokopia Tracker verwaltet 289 Pokémon aus 7 Spielwelten. Für jedes Pokémon lassen sich drei tägliche Status-Informationen erfassen:
 
 | Symbol | Bedeutung | Verhalten |
-|--------|-----------|-----------|
+| ------ | --------- | --------- |
 | 👋 | **Kennengelernt** – das Pokémon wurde im Spiel getroffen | Einmalig setzbar, bleibt gespeichert |
 | 🏠 | **Hat ein Haus** – das Pokémon hat ein eigenes Haus | Nur aktiv wenn das Pokémon kennengelernt wurde |
 | 💬 | **Heute gefragt** – das Pokémon wurde heute nach seiner Stimmung gefragt | Setzt sich täglich automatisch zurück |
 
-
 > [!NOTE]
 > Die Daten werden dauerhaft im Browser gespeichert (localStorage) und bleiben auch nach dem Schließen der App erhalten. **Es werden keine Daten außerhalb deines eigenen Webbrowsers gespeichert.**
+
+.
 
 > [!CAUTION]
 > Das bedeutet auch, dass du in unterschiedlichen Browsern nicht den gleichen Speicherstand haben wirst. [Siehe](#funktionen-in-planung)
@@ -34,7 +35,7 @@ Der Pokopia Tracker verwaltet 289 Pokémon aus 7 Spielwelten. Für jedes Pokémo
 > Spoiler warnung. Wer sich überraschen lassen will welche Pokemon es gibt, sollte lieber nicht weiter lesen.
 
 | Welt | Pokémon |
-|------|---------|
+| ---- | ------- |
 | 🌵 Welkwüstia | 44 |
 | 🌊 Trübküstia | 40 |
 | ⛰️ Kargbergia | 46 |
@@ -84,7 +85,7 @@ Im Header zeigen drei Kacheln den aktuellen Fortschritt:
 ### Technischer Stack
 
 | Technologie | Verwendung |
-|-------------|-----------|
+| ----------- | ---------- |
 | **React 18** | UI-Framework |
 | **Vite 5** | Build-Tool und Dev-Server |
 | **localStorage** | Persistente Datenspeicherung im Browser |
@@ -102,7 +103,7 @@ npm run build # Produktions-Build nach dist/
 
 ### Projektstruktur
 
-```
+```text
 pokopia-dex/
 ├── index.html               # HTML-Einstiegspunkt
 ├── vite.config.js
@@ -184,7 +185,7 @@ Beim Erweitern des Schemas die Versionsnummer im Storage-Key erhöhen (`pokopia-
 Der gesamte App-State liegt in `App.jsx`:
 
 | State | Typ | Beschreibung |
-|-------|-----|-------------|
+| ----- | --- | ------------ |
 | `data` | `Object` | Nutzerdaten (gespiegelt aus/nach localStorage) |
 | `openWorlds` | `Object` | Welche Welten aufgeklappt sind (`worldId → boolean`) |
 | `search` | `string` | Aktueller Suchbegriff |
@@ -197,7 +198,7 @@ Der gesamte App-State liegt in `App.jsx`:
 
 `src/utils/filter.js` – `matchesPokemon(pokemon, pokemonState, search, filter)`:
 
-```
+```text
 search gesetzt → Name muss den Suchbegriff enthalten (case-insensitive)
 filter "missing-met"   → !state.met
 filter "missing-house" → state.met && !state.hasHouse
@@ -210,7 +211,7 @@ Die Filterung findet in `WorldCard` statt. Welten die nach dem Filtern null Tref
 
 Pokémon mit `nationalId !== null` sind im `PokemonRow` klickbar. Der Sprite wird ohne API-Call direkt von GitHub geladen:
 
-```
+```text
 https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{nationalId}.png
 ```
 
@@ -219,9 +220,11 @@ Die URL ist CORS-kompatibel und benötigt keine Authentifizierung.
 ### Neues Pokémon hinzufügen
 
 1. In `src/data/pokemon.js` einen neuen Eintrag ergänzen:
+
    ```js
    { id: 305, name: "NeuesPokémon", worldId: "events", nationalId: null }
    ```
+
 2. Die Pokopia-`id` muss eindeutig und stabil sein – sie wird als localStorage-Schlüssel verwendet.
 3. Wenn die nationale Pokédex-Nummer bekannt ist, `nationalId` direkt setzen.
 
