@@ -76,7 +76,7 @@ Im Header zeigen drei Kacheln den aktuellen Fortschritt:
 ### Funktionen in Planung
 
 - [x] **Pokémon-Sprites** einbinden (Bilder der Pokemon)
-- [ ] **Export/Import** Daten Backup und Import
+- [ ] **Export/Import** Daten Backup und Import #1
 - [ ] **Notizfeld** pro Pokémon (Freitext)
 - [ ] **Mood-History** anzeigen – wie oft wurde ein Pokémon in den letzten 7 Tagen gefragt
 - [ ] **Mobile PWA** (manifest.json + Service Worker für Offline-Nutzung)
