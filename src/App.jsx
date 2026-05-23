@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { WORLDS } from './data/worlds'
+import { WORLDS } from './data'
 import { loadData, saveData, getTodayKey } from './utils/storage'
 import { computeStats } from './utils/stats'
 import Header from './components/Header'
