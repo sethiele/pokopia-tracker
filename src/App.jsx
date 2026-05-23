@@ -5,6 +5,7 @@ import { computeStats } from './utils/stats'
 import Header from './components/Header'
 import WorldCard from './components/WorldCard'
 import PokemonOverlay from './components/PokemonOverlay'
+import SettingsOverlay from './components/SettingsOverlay'
 import UpdateBanner from './components/UpdateBanner'
 import { useVersionCheck } from './hooks/useVersionCheck'
 
@@ -16,6 +17,7 @@ export default function App() {
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState("all")
   const [spritePokemon, setSpritePokemon] = useState(null)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const updateAvailable = useVersionCheck()
 
   useEffect(() => { saveData(data) }, [data])
@@ -62,6 +64,7 @@ export default function App() {
         onSearchChange={setSearch}
         filter={filter}
         onFilterChange={setFilter}
+        onSettingsOpen={() => setSettingsOpen(true)}
       />
 
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "18px 12px", display: "flex", flexDirection: "column", gap: 12 }}>
@@ -86,6 +89,9 @@ export default function App() {
 
       {spritePokemon && (
         <PokemonOverlay pokemon={spritePokemon} onClose={() => setSpritePokemon(null)} />
+      )}
+      {settingsOpen && (
+        <SettingsOverlay data={data} onClose={() => setSettingsOpen(false)} />
       )}
       {updateAvailable && <UpdateBanner />}
     </div>
