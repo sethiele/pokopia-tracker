@@ -4,6 +4,7 @@ import { loadData, saveData, getTodayKey } from './utils/storage'
 import { computeStats } from './utils/stats'
 import Header from './components/Header'
 import WorldCard from './components/WorldCard'
+import PokemonOverlay from './components/PokemonOverlay'
 
 const initialOpenWorlds = WORLDS.reduce((acc, w) => ({ ...acc, [w.id]: false }), {})
 
@@ -12,6 +13,7 @@ export default function App() {
   const [openWorlds, setOpenWorlds] = useState(initialOpenWorlds)
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState("all")
+  const [spritePokemon, setSpritePokemon] = useState(null)
 
   useEffect(() => { saveData(data) }, [data])
 
@@ -67,6 +69,7 @@ export default function App() {
             isOpen={openWorlds[world.id]}
             onToggle={toggle}
             onToggleWorld={toggleWorld}
+            onShowSprite={setSpritePokemon}
             search={search}
             filter={filter}
             getState={getState}
@@ -77,6 +80,10 @@ export default function App() {
       <div style={{ textAlign: "center", padding: "20px", fontSize: 12, color: "#bbb" }}>
         Daten werden lokal im Browser gespeichert · {stats.total} Pokémon in {WORLDS.length} Welten
       </div>
+
+      {spritePokemon && (
+        <PokemonOverlay pokemon={spritePokemon} onClose={() => setSpritePokemon(null)} />
+      )}
     </div>
   )
 }

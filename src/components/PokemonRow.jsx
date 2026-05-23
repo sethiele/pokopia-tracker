@@ -12,13 +12,23 @@ function getMoodTitle(met, moodToday) {
   return moodToday ? "Heute gefragt" : "Noch nicht gefragt"
 }
 
-export default function PokemonRow({ pokemon, state, onToggle, color }) {
+export default function PokemonRow({ pokemon, state, onToggle, onShowSprite, color }) {
   const rowStyle = { ...ROW_GRID, background: state.met ? color + "0d" : "transparent" }
-  const nameStyle = { fontSize: 14, fontWeight: state.met ? 700 : 400, color: "#2c2c2c", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }
+  const hasSprite = pokemon.nationalId !== null
+  const nameStyle = {
+    fontSize: 14,
+    fontWeight: state.met ? 700 : 400,
+    color: "#2c2c2c",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    cursor: hasSprite ? "pointer" : "default",
+    textDecoration: hasSprite ? "underline dotted #bbb" : "none",
+  }
 
   return (
     <div style={rowStyle}>
-      <span style={nameStyle}>{pokemon.name}</span>
+      <span style={nameStyle} onClick={hasSprite ? () => onShowSprite(pokemon) : undefined} title={hasSprite ? "Sprite anzeigen" : undefined}>{pokemon.name}</span>
       <CheckCircle
         checked={state.met}
         onToggle={() => onToggle(pokemon.id, "met")}

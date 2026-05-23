@@ -23,7 +23,7 @@ function getDisplayList(sorted, isFiltering, getState, search, filter) {
   return sorted.filter(p => matchesPokemon(p, getState(p.id), search, filter))
 }
 
-export default function WorldCard({ world, isOpen, onToggle, onToggleWorld, search, filter, getState }) {
+export default function WorldCard({ world, isOpen, onToggle, onToggleWorld, onShowSprite, search, filter, getState }) {
   const isFiltering = Boolean(search || filter !== "all")
   const sorted = sortedPokemon(world)
   const displayList = getDisplayList(sorted, isFiltering, getState, search, filter)
@@ -93,6 +93,7 @@ export default function WorldCard({ world, isOpen, onToggle, onToggleWorld, sear
               pokemon={pokemon}
               state={getState(pokemon.id)}
               onToggle={onToggle}
+              onShowSprite={onShowSprite}
               color={world.color}
             />
           ))}
