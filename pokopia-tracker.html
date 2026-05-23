@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pokopia Tracker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #faf9f7; font-family: 'Nunito', 'Segoe UI', sans-serif; color: #2c2c2c; }
+  input::placeholder { color: rgba(255,255,255,0.5); }
+  ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f1f1f1; } ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const WORLDS = [
+  {
+    id: "welkwuestia", name: "Welkwüstia", emoji: "🌵", color: "#e8a045", bg: "#fdf6ec",
+    pokemon: [
+      { id: 1, name: "Bisasam" }, { id: 2, name: "Bisaknosp" }, { id: 3, name: "Bisaflor" },
+      { id: 4, name: "Glumanda" }, { id: 5, name: "Glutexo" }, { id: 6, name: "Glurak" },
+      { id: 13, name: "Myrapla" }, { id: 14, name: "Duflor" }, { id: 15, name: "Giflor" },
+      { id: 16, name: "Blubella" }, { id: 17, name: "Paras" }, { id: 18, name: "Parasek" },
+      { id: 19, name: "Bluzuk" }, { id: 20, name: "Omot" }, { id: 30, name: "Onix" },
+      { id: 31, name: "Stahlos" }, { id: 32, name: "Tragosso" }, { id: 33, name: "Knogga" },
+      { id: 34, name: "Rabauz" }, { id: 35, name: "Kicklee" }, { id: 36, name: "Nockchan" },
+      { id: 37, name: "Kapoera" }, { id: 38, name: "Smogon" }, { id: 39, name: "Smogmog" },
+      { id: 40, name: "Tangela" }, { id: 41, name: "Tangoloss" }, { id: 47, name: "Ditto" },
+      { id: 65, name: "Praktibalk" }, { id: 66, name: "Strepoli" }, { id: 67, name: "Meistagrif" },
+      { id: 71, name: "Milza" }, { id: 72, name: "Sharfax" }, { id: 73, name: "Maxax" },
+      { id: 78, name: "Pichu" }, { id: 79, name: "Pikachu (Schlappchu)" }, { id: 159, name: "Kleinstein" },
+      { id: 160, name: "Georok" }, { id: 161, name: "Geowaz" }, { id: 165, name: "Mobai" },
+      { id: 166, name: "Mogelbaum" }, { id: 167, name: "Kramurx" }, { id: 168, name: "Kramshef" },
+      { id: 271, name: "Aerodactyl" }, { id: 272, name: "Koknodon" }, { id: 273, name: "Rameidon" },
+    ]
+  },
+  {
+    id: "truebkuestia", name: "Trübküstia", emoji: "🌊", color: "#3a8fc7", bg: "#edf6fc",
+    pokemon: [
+      { id: 7, name: "Schiggy" }, { id: 8, name: "Schillok" }, { id: 9, name: "Turtok" },
+      { id: 24, name: "Flegmon" }, { id: 25, name: "Lahmus" }, { id: 26, name: "Laschoking" },
+      { id: 45, name: "Karpador" }, { id: 46, name: "Garados" }, { id: 51, name: "Volbeat" },
+      { id: 52, name: "Illumise" }, { id: 53, name: "Schluppuck" }, { id: 54, name: "Schlukwech" },
+      { id: 59, name: "Schalellos" }, { id: 60, name: "Gastrodon" }, { id: 74, name: "Viscora" },
+      { id: 75, name: "Viscargot" }, { id: 76, name: "Viscogon" }, { id: 77, name: "Urgl" },
+      { id: 86, name: "Enton" }, { id: 87, name: "Entoron" }, { id: 98, name: "Owei" },
+      { id: 99, name: "Kokowei" }, { id: 106, name: "Lapras" }, { id: 114, name: "Azurill" },
+      { id: 115, name: "Marill" }, { id: 116, name: "Azumarill" }, { id: 123, name: "Wingull" },
+      { id: 124, name: "Pelupper" }, { id: 128, name: "Plinfa" }, { id: 129, name: "Pliprin" },
+      { id: 130, name: "Impoleon" }, { id: 173, name: "Loturzel" }, { id: 174, name: "Lombrero" },
+      { id: 175, name: "Kappalores" }, { id: 209, name: "Quapsel" }, { id: 210, name: "Quaputzi" },
+      { id: 211, name: "Quappo" }, { id: 251, name: "Froxy" }, { id: 252, name: "Amphizel" },
+      { id: 253, name: "Quajutsu" },
+    ]
+  },
+  {
+    id: "kargbergia", name: "Kargbergia", emoji: "⛰️", color: "#7c6fa0", bg: "#f3f0f9",
+    pokemon: [
+      { id: 10, name: "Taubsi" }, { id: 11, name: "Tauboga" }, { id: 12, name: "Tauboss" },
+      { id: 27, name: "Magnetilo" }, { id: 28, name: "Magneton" }, { id: 29, name: "Magnezone" },
+      { id: 48, name: "Hoothoot" }, { id: 49, name: "Noctuh" }, { id: 68, name: "Lichtel" },
+      { id: 69, name: "Laternecto" }, { id: 70, name: "Skelabra" }, { id: 81, name: "Zubat" },
+      { id: 82, name: "Golbat" }, { id: 83, name: "Iksbat" }, { id: 91, name: "Sleima" },
+      { id: 92, name: "Sleimok" }, { id: 93, name: "Nebulak" }, { id: 94, name: "Alpollo" },
+      { id: 95, name: "Gengar" }, { id: 96, name: "Voltobal" }, { id: 97, name: "Lektrobal" },
+      { id: 103, name: "Elekid" }, { id: 104, name: "Elektek" }, { id: 105, name: "Elevoltek" },
+      { id: 111, name: "Voltilamm" }, { id: 112, name: "Waaty" }, { id: 113, name: "Ampharos" },
+      { id: 127, name: "Absol" }, { id: 134, name: "Zorua" }, { id: 135, name: "Zoroark" },
+      { id: 136, name: "Picochilla" }, { id: 137, name: "Chillabell" }, { id: 156, name: "Machollo" },
+      { id: 157, name: "Maschock" }, { id: 158, name: "Machomei" }, { id: 169, name: "Larvitar" },
+      { id: 170, name: "Pupitar" }, { id: 171, name: "Despotar" }, { id: 213, name: "Abra" },
+      { id: 214, name: "Kadabra" }, { id: 215, name: "Simsala" }, { id: 237, name: "Knacklion" },
+      { id: 238, name: "Vibrava" }, { id: 239, name: "Libelldra" }, { id: 246, name: "Tanhel" },
+      { id: 247, name: "Metang" }, { id: 248, name: "Metagross" },
+    ]
+  },
+  {
+    id: "mooswald", name: "Mooswald", emoji: "🌿", color: "#4a9a6e", bg: "#edf7f2",
+    pokemon: [
+      { id: 21, name: "Knofensa" }, { id: 22, name: "Ultrigaria" }, { id: 23, name: "Sarzenia" },
+      { id: 42, name: "Sichlor" }, { id: 43, name: "Scherox" }, { id: 44, name: "Pinsir" },
+      { id: 50, name: "Skaraborn" }, { id: 55, name: "Tuska" }, { id: 56, name: "Noktuska" },
+      { id: 57, name: "Wadribie" }, { id: 58, name: "Honweisel" }, { id: 88, name: "Fukano" },
+      { id: 89, name: "Arkani" }, { id: 107, name: "Mampfax" }, { id: 108, name: "Relaxo" },
+      { id: 109, name: "Webarak" }, { id: 110, name: "Ariados" }, { id: 117, name: "Paldea-Felino" },
+      { id: 120, name: "Flemmli" }, { id: 121, name: "Jungglut" }, { id: 122, name: "Lohgock" },
+      { id: 138, name: "Mabula" }, { id: 139, name: "Akkup" }, { id: 140, name: "Donarion" },
+      { id: 141, name: "Mimigma" }, { id: 142, name: "Pamo" }, { id: 143, name: "Pamamo" },
+      { id: 144, name: "Pamomamo" }, { id: 180, name: "Riolu" }, { id: 181, name: "Lucario" },
+      { id: 185, name: "Bauz" }, { id: 186, name: "Arboretoss" }, { id: 187, name: "Silvarro" },
+      { id: 188, name: "Hopplo" }, { id: 189, name: "Kickerlo" }, { id: 190, name: "Liberlo" },
+      { id: 191, name: "Raffel" }, { id: 192, name: "Schlaraffel" }, { id: 207, name: "Vulpix" },
+      { id: 208, name: "Vulnona" }, { id: 224, name: "Feurigel" }, { id: 225, name: "Igelavar" },
+      { id: 226, name: "Tornupto" }, { id: 248, name: "Serpifeu" }, { id: 249, name: "Efoserp" },
+      { id: 250, name: "Serpiroyal" },
+    ]
+  },
+  {
+    id: "neulandia", name: "Neulandia", emoji: "🏝️", color: "#d4607a", bg: "#fdf0f3",
+    pokemon: [
+      { id: 61, name: "Driftlon" }, { id: 62, name: "Drifzepeli" }, { id: 63, name: "Rotomurf" },
+      { id: 64, name: "Stalobor" }, { id: 80, name: "Raichu" }, { id: 84, name: "Mauzi" },
+      { id: 85, name: "Snobilikat" }, { id: 100, name: "Wonneira" }, { id: 101, name: "Chaneira" },
+      { id: 102, name: "Heiteira" }, { id: 118, name: "Sudoke" }, { id: 119, name: "Farbeagle" },
+      { id: 131, name: "Ohrdoch" }, { id: 132, name: "Unratütox" }, { id: 133, name: "Deponitox" },
+      { id: 145, name: "Nigiragi" }, { id: 146, name: "Rettan" }, { id: 147, name: "Arbok" },
+      { id: 148, name: "Pii" }, { id: 149, name: "Piepi" }, { id: 150, name: "Pixi" },
+      { id: 151, name: "Fluffeluff" }, { id: 152, name: "Pummeluff" }, { id: 153, name: "Knuddeluff" },
+      { id: 154, name: "Digda" }, { id: 155, name: "Digdri" }, { id: 162, name: "Magby" },
+      { id: 163, name: "Magmar" }, { id: 164, name: "Magbrant" }, { id: 176, name: "Flunkifer" },
+      { id: 177, name: "Qurtel" }, { id: 178, name: "Zirpurze" }, { id: 179, name: "Zirpeise" },
+      { id: 182, name: "Stereo-Rotom" }, { id: 193, name: "Klonket" }, { id: 194, name: "Wagong" },
+      { id: 195, name: "Montecarbo" }, { id: 196, name: "Toxel" }, { id: 197, name: "Riffex" },
+      { id: 198, name: "Hefel" }, { id: 199, name: "Backel" }, { id: 200, name: "Knarbon" },
+      { id: 201, name: "Crimanzo" }, { id: 202, name: "Azugladis" }, { id: 203, name: "Glimmet" },
+      { id: 204, name: "Glimmora" }, { id: 205, name: "Gierspenst" }, { id: 206, name: "Monetigo" },
+      { id: 216, name: "Pantimimi" }, { id: 217, name: "Pantimos" }, { id: 218, name: "Porygon" },
+      { id: 219, name: "Porygon2" }, { id: 220, name: "Porygon-Z" }, { id: 221, name: "Dratini" },
+      { id: 222, name: "Dragonir" }, { id: 223, name: "Dragoran" }, { id: 227, name: "Traunfugil" },
+      { id: 228, name: "Traunmagil" }, { id: 229, name: "Girafarig" }, { id: 230, name: "Farigiraf" },
+      { id: 231, name: "Trasla" }, { id: 232, name: "Kirlia" }, { id: 233, name: "Guardevoir" },
+      { id: 234, name: "Galagladi" }, { id: 235, name: "Plusle" }, { id: 236, name: "Minun" },
+      { id: 240, name: "Wablu" }, { id: 241, name: "Altaria" }, { id: 242, name: "Zwirrlicht" },
+      { id: 243, name: "Zwirrklop" }, { id: 244, name: "Zwirrfinst" }, { id: 254, name: "Dedenne" },
+      { id: 255, name: "eF-eM" }, { id: 256, name: "UHaFnir" }, { id: 257, name: "Meikro" },
+      { id: 258, name: "Kranoviz" }, { id: 259, name: "Krarmor" }, { id: 260, name: "Grolldra" },
+      { id: 261, name: "Phandra" }, { id: 262, name: "Katapuldra" }, { id: 263, name: "Felori" },
+      { id: 264, name: "Feliospa" }, { id: 265, name: "Maskagato" }, { id: 266, name: "Wattz" },
+      { id: 267, name: "Voltrell" }, { id: 268, name: "Forgita" }, { id: 269, name: "Tafforgita" },
+      { id: 270, name: "Granforgita" }, { id: 274, name: "Schilterus" }, { id: 275, name: "Bollterus" },
+      { id: 276, name: "Balgoras" }, { id: 277, name: "Monargoras" }, { id: 278, name: "Amarino" },
+      { id: 279, name: "Amagarga" }, { id: 280, name: "Evoli" }, { id: 281, name: "Aquana" },
+      { id: 282, name: "Blitza" }, { id: 283, name: "Flamara" }, { id: 284, name: "Psiana" },
+      { id: 285, name: "Nachtara" }, { id: 286, name: "Folipurba" }, { id: 287, name: "Glaziola" },
+      { id: 288, name: "Feelinara" },
+    ]
+  },
+  {
+    id: "legendaer", name: "Legendäre & Besondere", emoji: "✨", color: "#c8962a", bg: "#fdf8ed",
+    pokemon: [
+      { id: 90, name: "Porenta" }, { id: 125, name: "Makuhita" }, { id: 126, name: "Hariyama" },
+      { id: 179, name: "Plaudagei" }, { id: 183, name: "Ignivor" }, { id: 184, name: "Ramoth" },
+      { id: 289, name: "Kyogre" }, { id: 290, name: "Raikou" }, { id: 291, name: "Entei" },
+      { id: 292, name: "Suicune" }, { id: 293, name: "Volcanion" }, { id: 294, name: "Arktos" },
+      { id: 295, name: "Zapdos" }, { id: 296, name: "Lavados" }, { id: 297, name: "Ho-Oh" },
+      { id: 298, name: "Lugia" }, { id: 299, name: "Mewtu" }, { id: 300, name: "Mew" },
+    ]
+  },
+  {
+    id: "events", name: "Event-Pokémon", emoji: "🎉", color: "#9b59b6", bg: "#f9f0fd",
+    pokemon: [
+      { id: 301, name: "Hoppspross" }, { id: 302, name: "Hubelupf" },
+      { id: 303, name: "Papungha" }, { id: 304, name: "Zobiris" },
+    ]
+  },
+];
+
+const STORAGE_KEY = "pokopia-tracker-v1";
+
+function getTodayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
+function saveData(d) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } catch {}
+}
+
+// ---- CheckCircle ----
+function CheckCircle({ checked, onToggle, color, emoji, disabled, title }) {
+  return (
+    <button onClick={disabled ? undefined : onToggle} title={title} style={{
+      width: 32, height: 32, borderRadius: "50%",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      background: checked ? color : "transparent",
+      border: `2px solid ${checked ? color : "#ddd"}`,
+      cursor: disabled ? "not-allowed" : "pointer",
+      opacity: disabled ? 0.3 : 1,
+      transform: checked ? "scale(1.1)" : "scale(1)",
+      transition: "all 0.15s ease",
+      flexShrink: 0,
+    }}>
+      {checked ? <span style={{ fontSize: 14 }}>{emoji}</span> : null}
+    </button>
+  );
+}
+
+// ---- ProgressBar ----
+function ProgressBar({ value, max, color }) {
+  const pct = max > 0 ? (value / max) * 100 : 0;
+  return (
+    <div style={{ width: 80, height: 6, background: "rgba(0,0,0,0.1)", borderRadius: 3, overflow: "hidden", flexShrink: 0 }}>
+      <div style={{ height: "100%", borderRadius: 3, width: `${pct}%`, background: color, transition: "width 0.3s ease" }} />
+    </div>
+  );
+}
+
+// ---- StatBadge ----
+function StatBadge({ label, value, total, color, emoji }) {
+  const pct = total > 0 ? Math.round((value / total) * 100) : 0;
+  return (
+    <div style={{ flex: "1 1 110px", background: "rgba(255,255,255,0.08)", border: `1px solid ${color}40`, borderRadius: 12, padding: "10px 12px", display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+      <div style={{ fontSize: 18 }}>{emoji}</div>
+      <div style={{ fontSize: 20, fontWeight: 800, color, lineHeight: 1 }}>{value}<span style={{ fontSize: 13, fontWeight: 400, opacity: 0.6 }}>/{total}</span></div>
+      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", textAlign: "center" }}>{label}</div>
+      <div style={{ fontSize: 11, fontWeight: 700, color }}>{pct}%</div>
+    </div>
+  );
+}
+
+// ---- PokemonRow ----
+function PokemonRow({ pokemon, state, onToggle, color }) {
+  return (
+    <div style={{
+      display: "grid", gridTemplateColumns: "1fr 36px 36px 36px",
+      alignItems: "center", padding: "4px 14px", gap: 6,
+      borderRadius: 8, margin: "1px 6px",
+      background: state.met ? color + "0d" : "transparent",
+      transition: "background 0.1s",
+    }}>
+      <span style={{ fontSize: 14, fontWeight: state.met ? 700 : 400, color: "#2c2c2c", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        {pokemon.name}
+      </span>
+      <CheckCircle checked={state.met} onToggle={() => onToggle(pokemon.id, "met")} color="#4a9a6e" emoji="👋" title={state.met ? "Kennengelernt" : "Noch nicht kennengelernt"} />
+      <CheckCircle checked={state.hasHouse} onToggle={() => onToggle(pokemon.id, "hasHouse")} color="#e8a045" emoji="🏠" disabled={!state.met} title={state.met ? (state.hasHouse ? "Haus vorhanden" : "Noch kein Haus") : "Erst kennenlernen"} />
+      <CheckCircle checked={state.moodToday} onToggle={() => onToggle(pokemon.id, "mood")} color="#d4607a" emoji="💬" disabled={!state.met} title={state.met ? (state.moodToday ? "Heute gefragt" : "Noch nicht gefragt") : "Erst kennenlernen"} />
+    </div>
+  );
+}
+
+// ---- Main App ----
+function App() {
+  const [data, setData] = React.useState(() => loadData());
+  const [openWorlds, setOpenWorlds] = React.useState(() => WORLDS.reduce((a, w) => ({ ...a, [w.id]: false }), {}));
+  const [search, setSearch] = React.useState("");
+  const [filter, setFilter] = React.useState("all");
+
+  React.useEffect(() => { saveData(data); }, [data]);
+
+  const toggle = React.useCallback((pokemonId, field) => {
+    setData(prev => {
+      const key = String(pokemonId);
+      const today = getTodayKey();
+      if (field === "mood") {
+        const current = prev[key]?.moodDates || {};
+        const newDates = current[today]
+          ? Object.fromEntries(Object.entries(current).filter(([d]) => d !== today))
+          : { ...current, [today]: true };
+        return { ...prev, [key]: { ...prev[key], moodDates: newDates } };
+      }
+      return { ...prev, [key]: { ...prev[key], [field]: !prev[key]?.[field] } };
+    });
+  }, []);
+
+  const getState = React.useCallback((id) => {
+    const p = data[String(id)] || {};
+    const today = getTodayKey();
+    return { hasHouse: !!p.hasHouse, met: !!p.met, moodToday: !!(p.moodDates || {})[today] };
+  }, [data]);
+
+  const toggleWorld = (id) => setOpenWorlds(prev => ({ ...prev, [id]: !prev[id] }));
+
+  const totalPokemon = WORLDS.reduce((s, w) => s + w.pokemon.length, 0);
+  const metCount = WORLDS.reduce((s, w) => s + w.pokemon.filter(p => data[String(p.id)]?.met).length, 0);
+  const houseCount = WORLDS.reduce((s, w) => s + w.pokemon.filter(p => data[String(p.id)]?.hasHouse).length, 0);
+  const today = getTodayKey();
+  const moodCount = WORLDS.reduce((s, w) => s + w.pokemon.filter(p => (data[String(p.id)]?.moodDates || {})[today]).length, 0);
+
+  const filterPokemon = (pokemon) => {
+    if (search && !pokemon.name.toLowerCase().includes(search.toLowerCase())) return false;
+    const state = getState(pokemon.id);
+    if (filter === "missing-house") return state.met && !state.hasHouse;
+    if (filter === "missing-met") return !state.met;
+    if (filter === "needs-check") return state.met && !state.moodToday;
+    return true;
+  };
+
+  const FILTERS = [
+    { id: "all", label: "Alle" },
+    { id: "missing-met", label: "Noch unbekannt" },
+    { id: "missing-house", label: "Ohne Haus" },
+    { id: "needs-check", label: "Heute noch fragen" },
+  ];
+
+  return (
+    <div style={{ fontFamily: "'Nunito', 'Segoe UI', sans-serif", background: "#faf9f7", minHeight: "100vh" }}>
+
+      {/* HEADER */}
+      <div style={{ background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)", padding: "0 0 18px", position: "sticky", top: 0, zIndex: 10, boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }}>
+        <div style={{ maxWidth: 860, margin: "0 auto", padding: "18px 16px 0" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
+            <span style={{ fontSize: 38 }}>🎮</span>
+            <div>
+              <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", letterSpacing: "-0.5px" }}>Pokopia Tracker</h1>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", marginTop: 2 }}>Deine Pokémon-Übersicht für alle Welten</p>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+            <StatBadge label="Kennengelernt" value={metCount} total={totalPokemon} color="#4a9a6e" emoji="👋" />
+            <StatBadge label="Mit Haus" value={houseCount} total={totalPokemon} color="#e8a045" emoji="🏠" />
+            <StatBadge label="Heute gefragt" value={moodCount} total={metCount} color="#d4607a" emoji="💬" />
+          </div>
+
+          <input
+            type="text" placeholder="🔍 Pokémon suchen…" value={search}
+            onChange={e => setSearch(e.target.value)}
+            style={{ width: "100%", padding: "9px 14px", borderRadius: 10, border: "none", fontSize: 14, background: "rgba(255,255,255,0.12)", color: "#fff", outline: "none", marginBottom: 8 }}
+          />
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {FILTERS.map(f => (
+              <button key={f.id} onClick={() => setFilter(f.id)} style={{
+                padding: "5px 11px", borderRadius: 20, fontSize: 12, cursor: "pointer", fontFamily: "inherit",
+                border: `1px solid ${filter === f.id ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.25)"}`,
+                background: filter === f.id ? "rgba(255,255,255,0.2)" : "transparent",
+                color: filter === f.id ? "#fff" : "rgba(255,255,255,0.7)",
+                fontWeight: filter === f.id ? 700 : 400,
+                transition: "all 0.15s",
+              }}>{f.label}</button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* WORLD SECTIONS */}
+      <div style={{ maxWidth: 860, margin: "0 auto", padding: "18px 12px", display: "flex", flexDirection: "column", gap: 12 }}>
+        {WORLDS.map(world => {
+          const sorted = [...world.pokemon].sort((a, b) => a.name.localeCompare(b.name, "de"));
+          const filtered = sorted.filter(filterPokemon);
+          if ((search || filter !== "all") && filtered.length === 0) return null;
+          const displayList = (search || filter !== "all") ? filtered : sorted;
+          const worldMet = world.pokemon.filter(p => data[String(p.id)]?.met).length;
+          const isOpen = openWorlds[world.id];
+
+          return (
+            <div key={world.id} style={{ borderRadius: 16, border: `1px solid ${world.color}40`, background: world.bg, overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+
+              {/* World header button */}
+              <button onClick={() => toggleWorld(world.id)} style={{
+                width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "13px 16px", cursor: "pointer", border: "none", textAlign: "left",
+                fontFamily: "inherit", gap: 12,
+                background: world.color + "18",
+                borderBottom: isOpen ? `2px solid ${world.color}30` : "none",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
+                  <span style={{ fontSize: 26 }}>{world.emoji}</span>
+                  <div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: world.color }}>{world.name}</div>
+                    <div style={{ fontSize: 12, color: "#888", marginTop: 1 }}>{worldMet}/{world.pokemon.length} kennengelernt</div>
+                  </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                  <ProgressBar value={worldMet} max={world.pokemon.length} color={world.color} />
+                  <span style={{ fontSize: 20, color: world.color, transition: "transform 0.2s", display: "inline-block", transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                </div>
+              </button>
+
+              {/* Pokemon list */}
+              {isOpen && (
+                <div style={{ padding: "6px 0 10px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 36px 36px 36px", padding: "4px 14px 6px", gap: 6, borderBottom: "1px solid rgba(0,0,0,0.06)", marginBottom: 4 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "#aaa", textTransform: "uppercase", letterSpacing: "0.5px" }}>Pokémon</span>
+                    <span style={{ fontSize: 13, textAlign: "center" }} title="Kennengelernt">👋</span>
+                    <span style={{ fontSize: 13, textAlign: "center" }} title="Hat ein Haus">🏠</span>
+                    <span style={{ fontSize: 13, textAlign: "center" }} title="Heute gefragt">💬</span>
+                  </div>
+                  {displayList.map(pokemon => (
+                    <PokemonRow key={pokemon.id} pokemon={pokemon} state={getState(pokemon.id)} onToggle={toggle} color={world.color} />
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{ textAlign: "center", padding: "20px", fontSize: 12, color: "#bbb" }}>
+        Daten werden lokal im Browser gespeichert · {totalPokemon} Pokémon in {WORLDS.length} Welten
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+</script>
+</body>
+</html>
