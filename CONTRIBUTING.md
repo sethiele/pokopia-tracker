@@ -31,13 +31,54 @@ npm run build     # verify the production build
 
 ---
 
+## Testing
+
+The project uses [Vitest](https://vitest.dev/) with a jsdom environment. All 54 tests must pass before a pull request can be merged — this is enforced automatically by the GitHub Actions test workflow.
+
+```bash
+npm test             # run all tests once
+npm run test:watch   # re-run on file changes (useful during development)
+```
+
+### Test files
+
+| File | What it covers |
+| ---- | -------------- |
+| `src/__tests__/data.test.js` | Data integrity: unique IDs, valid `worldId` values, `nationalId` format, join completeness |
+| `src/__tests__/storage.test.js` | `loadData` / `saveData` round-trip and error handling |
+| `src/__tests__/filter.test.js` | `matchesPokemon` for all filter IDs, search, and combined cases |
+| `src/__tests__/stats.test.js` | `computeStats` — met, house, mood counts and edge cases |
+| `src/__tests__/backup.test.js` | `importData` (valid JSON, error cases) and `exportData` (filename, Blob type, content, URL revocation) |
+
+### What to test when adding new code
+
+- **New utility function** → add a test file in `src/__tests__/` named after the module.
+- **New data entry** (Pokémon or world) → `data.test.js` catches integrity issues automatically; no extra tests needed unless you add a new field with its own rules.
+- **New filter option** → add cases to `filter.test.js`.
+- **Changed backup format** → update `backup.test.js` to cover the new shape.
+
+### How tests work
+
+Tests run in jsdom. A custom in-memory localStorage mock is registered in `src/test/setup.js` so storage tests work reliably without a real browser.
+
+For `importData`, tests use real `File` objects — jsdom supports `FileReader` natively:
+
+```js
+new File([JSON.stringify(data)], 'backup.json', { type: 'application/json' })
+```
+
+For `exportData`, `document.createElement`, `URL.createObjectURL`, and `URL.revokeObjectURL` are mocked via `vi.spyOn` / `vi.stubGlobal` since no real file system is available in the test environment.
+
+---
+
 ## Submitting Changes
 
 1. Fork the repository
 2. Create a branch: `git checkout -b my-feature`
 3. Make your changes and commit them (see commit style below)
-4. Verify the build: `npm run build` must complete without errors
-5. Open a pull request against `main` with a short description of what and why
+4. Run `npm test` — all tests must pass
+5. Verify the build: `npm run build` must complete without errors
+6. Open a pull request against `main` with a short description of what and why
 
 ### Commit Style
 
