@@ -27,6 +27,12 @@ jobs:
 
       - run: npm ci
 
+      - name: Write version
+        run: |
+          TAG=$(git tag --sort=-version:refname | head -1)
+          if [ -z "$TAG" ]; then TAG="untagged"; fi
+          printf '{"version":"%s"}\n' "$TAG" > public/version.json
+
       - name: Build
         run: npm run build
         env:

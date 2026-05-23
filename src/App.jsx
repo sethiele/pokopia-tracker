@@ -5,6 +5,8 @@ import { computeStats } from './utils/stats'
 import Header from './components/Header'
 import WorldCard from './components/WorldCard'
 import PokemonOverlay from './components/PokemonOverlay'
+import UpdateBanner from './components/UpdateBanner'
+import { useVersionCheck } from './hooks/useVersionCheck'
 
 const initialOpenWorlds = WORLDS.reduce((acc, w) => ({ ...acc, [w.id]: false }), {})
 
@@ -14,6 +16,7 @@ export default function App() {
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState("all")
   const [spritePokemon, setSpritePokemon] = useState(null)
+  const updateAvailable = useVersionCheck()
 
   useEffect(() => { saveData(data) }, [data])
 
@@ -84,6 +87,7 @@ export default function App() {
       {spritePokemon && (
         <PokemonOverlay pokemon={spritePokemon} onClose={() => setSpritePokemon(null)} />
       )}
+      {updateAvailable && <UpdateBanner />}
     </div>
   )
 }

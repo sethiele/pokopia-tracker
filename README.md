@@ -16,7 +16,12 @@ Der Pokopia Tracker verwaltet 289 Pokémon aus 7 Spielwelten. Für jedes Pokémo
 | 🏠 | **Hat ein Haus** – das Pokémon hat ein eigenes Haus | Nur aktiv wenn das Pokémon kennengelernt wurde |
 | 💬 | **Heute gefragt** – das Pokémon wurde heute nach seiner Stimmung gefragt | Setzt sich täglich automatisch zurück |
 
-Die Daten werden dauerhaft im Browser gespeichert (localStorage) und bleiben auch nach dem Schließen der App erhalten. **Es werden keine Daten außerhalb deines eigenen Webbrowsers gespeichert.**
+
+> [!NOTE]
+> Die Daten werden dauerhaft im Browser gespeichert (localStorage) und bleiben auch nach dem Schließen der App erhalten. **Es werden keine Daten außerhalb deines eigenen Webbrowsers gespeichert.**
+
+> [!CAUTION]
+> Das bedeutet auch, dass du in unterschiedlichen Browsern nicht den gleichen Speicherstand haben wirst. [Siehe](#funktionen-in-planung)
 
 ### Die 7 Welten
 
