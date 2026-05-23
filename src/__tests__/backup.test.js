@@ -1,5 +1,43 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
-import { exportData } from '../utils/backup'
+import { exportData, importData } from '../utils/backup'
+
+function makeFile(content, name = 'backup.json') {
+  return new File([content], name, { type: 'application/json' })
+}
+
+describe('importData', () => {
+  test('resolves with parsed data for a valid JSON file', async () => {
+    const data = { '1': { met: true, hasHouse: false } }
+    const file = makeFile(JSON.stringify(data))
+    await expect(importData(file)).resolves.toEqual(data)
+  })
+
+  test('resolves with an empty object', async () => {
+    await expect(importData(makeFile('{}'))).resolves.toEqual({})
+  })
+
+  test('rejects on invalid JSON', async () => {
+    await expect(importData(makeFile('not json'))).rejects.toThrow()
+  })
+
+  test('rejects when JSON root is an array', async () => {
+    await expect(importData(makeFile('[1,2,3]'))).rejects.toThrow()
+  })
+
+  test('rejects when JSON root is null', async () => {
+    await expect(importData(makeFile('null'))).rejects.toThrow()
+  })
+
+  test('rejects when JSON root is a string', async () => {
+    await expect(importData(makeFile('"hello"'))).rejects.toThrow()
+  })
+
+  test('preserves nested moodDates correctly', async () => {
+    const data = { '42': { met: true, moodDates: { '2026-05-23': true } } }
+    const file = makeFile(JSON.stringify(data))
+    await expect(importData(file)).resolves.toEqual(data)
+  })
+})
 
 function setupMocks() {
   const clickSpy = vi.fn()

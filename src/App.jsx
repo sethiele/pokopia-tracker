@@ -91,7 +91,11 @@ export default function App() {
         <PokemonOverlay pokemon={spritePokemon} onClose={() => setSpritePokemon(null)} />
       )}
       {settingsOpen && (
-        <SettingsOverlay data={data} onClose={() => setSettingsOpen(false)} />
+        <SettingsOverlay
+          data={data}
+          onImport={setData}
+          onClose={() => setSettingsOpen(false)}
+        />
       )}
       {updateAvailable && <UpdateBanner />}
     </div>
