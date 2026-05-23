@@ -29,7 +29,7 @@ Der Pokopia Tracker verwaltet 289 Pokémon aus 7 Spielwelten. Für jedes Pokémo
 .
 
 > [!CAUTION]
-> Das bedeutet auch, dass du in unterschiedlichen Browsern nicht den gleichen Speicherstand haben wirst. [Siehe](#funktionen-in-planung)
+> Das bedeutet auch, dass du in unterschiedlichen Browsern nicht den gleichen Speicherstand haben wirst. [Siehe](#datensicherung--wiederherstellung)
 
 ### Die 7 Welten
 
@@ -73,10 +73,29 @@ Im Header zeigen drei Kacheln den aktuellen Fortschritt:
 
 ---
 
+### Datensicherung & Wiederherstellung
+
+Das **⚙️-Symbol** oben rechts neben dem App-Namen öffnet das Einstellungs-Overlay. Dort gibt es zwei Funktionen:
+
+#### Daten herunterladen
+
+Speichert alle aktuellen Pokémon-Daten als JSON-Datei auf dem Gerät. Der Dateiname enthält das aktuelle Datum, z. B. `pokopia-tracker-2026-05-23.json`. Die Datei kann als Backup aufbewahrt werden, um den Fortschritt bei einem Gerätewechsel oder Browserwechsel zu erhalten.
+
+#### Daten wiederherstellen
+
+Lädt eine zuvor gesicherte JSON-Datei und stellt den darin enthaltenen Fortschritt wieder her.
+
+> [!CAUTION]
+> **Beim Wiederherstellen werden die aktuellen Daten vollständig überschrieben.** Es gibt keine Möglichkeit, diesen Vorgang rückgängig zu machen. Vorher sichern!
+
+Nach einem erfolgreichen Import erscheint eine grüne Bestätigung. Wenn die Datei kein gültiges Format hat, wird eine rote Fehlermeldung angezeigt und die vorhandenen Daten bleiben unverändert.
+
+---
+
 ### Funktionen in Planung
 
 - [x] **Pokémon-Sprites** einbinden (Bilder der Pokemon)
-- [ ] **Export/Import** Daten Backup und Import #1
+- [x] **Export/Import** Daten Backup und Import #1
 - [ ] **Notizfeld** pro Pokémon (Freitext)
 - [ ] **Mood-History** anzeigen – wie oft wurde ein Pokémon in den letzten 7 Tagen gefragt
 - [ ] **Mobile PWA** (manifest.json + Service Worker für Offline-Nutzung)
@@ -92,15 +111,18 @@ Im Header zeigen drei Kacheln den aktuellen Fortschritt:
 | **Vite 5** | Build-Tool und Dev-Server |
 | **localStorage** | Persistente Datenspeicherung im Browser |
 | **PokéAPI GitHub Sprites** | Pokémon-Sprites per nationalId (kein API-Call, direkte URL-Konstruktion) |
+| **Vitest + jsdom** | Unit-Tests und Datenintegritäts-Tests |
 
 Es gibt kein CSS-Framework. Styles sind als JavaScript-Objekte direkt in den Komponenten definiert (Inline-Styles). Es gibt keine externe Abhängigkeit zur Laufzeit außer React.
 
 ### Projekt starten
 
 ```bash
-npm install   # einmalig
-npm run dev   # Dev-Server auf http://localhost:5173
-npm run build # Produktions-Build nach dist/
+npm install          # einmalig
+npm run dev          # Dev-Server auf http://localhost:5173
+npm run build        # Produktions-Build nach dist/
+npm test             # Tests einmalig ausführen
+npm run test:watch   # Tests im Watch-Modus (re-runs bei Änderungen)
 ```
 
 ### Projektstruktur
@@ -120,7 +142,16 @@ pokopia-dex/
 │   ├── utils/
 │   │   ├── storage.js       # localStorage lesen/schreiben
 │   │   ├── filter.js        # Filterlogik pro Pokémon
-│   │   └── stats.js         # Berechnung der Header-Statistiken
+│   │   ├── stats.js         # Berechnung der Header-Statistiken
+│   │   └── backup.js        # Export und Import der Nutzerdaten
+│   ├── test/
+│   │   └── setup.js         # Vitest-Setup (localStorage-Mock)
+│   ├── __tests__/
+│   │   ├── data.test.js     # Datenintegrität (IDs, worldIds, Farben)
+│   │   ├── storage.test.js  # loadData / saveData Round-Trip
+│   │   ├── filter.test.js   # matchesPokemon – alle Filter und Kombinationen
+│   │   ├── stats.test.js    # computeStats – met, house, mood
+│   │   └── backup.test.js   # exportData und importData
 │   └── components/
 │       ├── Header.jsx       # Sticky Header mit Stats, Suche, Filter
 │       ├── StatBadge.jsx    # Einzelne Statistik-Kachel
@@ -128,7 +159,9 @@ pokopia-dex/
 │       ├── PokemonRow.jsx   # Einzelne Pokémon-Zeile mit drei Checkboxen
 │       ├── CheckCircle.jsx  # Runder Toggle-Button
 │       ├── ProgressBar.jsx  # Fortschrittsbalken pro Welt
-│       └── PokemonOverlay.jsx # Sprite-Overlay
+│       ├── PokemonOverlay.jsx # Sprite-Overlay
+│       ├── SettingsOverlay.jsx # Einstellungs-Overlay (Backup & Restore)
+│       └── UpdateBanner.jsx # Banner bei verfügbarem App-Update
 ```
 
 ### Datenmodell
@@ -193,6 +226,7 @@ Der gesamte App-State liegt in `App.jsx`:
 | `search` | `string` | Aktueller Suchbegriff |
 | `filter` | `string` | Aktiver Filter-ID |
 | `spritePokemon` | `Object\|null` | Pokémon für das Sprite-Overlay (null = geschlossen) |
+| `settingsOpen` | `boolean` | Ob das Einstellungs-Overlay angezeigt wird |
 
 `toggle` und `getState` sind mit `useCallback` stabilisiert, damit sie sich nur ändern wenn `data` sich ändert. `saveData` wird per `useEffect` nach jedem `data`-Update aufgerufen.
 
@@ -219,6 +253,67 @@ https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{nation
 
 Die URL ist CORS-kompatibel und benötigt keine Authentifizierung.
 
+### Tests
+
+#### Ausführen
+
+```bash
+npm test             # alle Tests einmalig
+npm run test:watch   # Watch-Modus – re-runs bei Dateiänderungen
+```
+
+Tests laufen in einer jsdom-Umgebung. Es wird kein Browser benötigt.
+
+#### Testdateien
+
+| Datei | Was wird getestet | Tests |
+| ----- | ----------------- | ----- |
+| `data.test.js` | Integrität aller Stammdaten: eindeutige IDs, gültige `worldId`, `nationalId`-Format, Join-Vollständigkeit | 11 |
+| `storage.test.js` | `loadData` / `saveData` Round-Trip, Fehlerbehandlung bei korrupten localStorage-Daten | 7 |
+| `filter.test.js` | `matchesPokemon` für alle Filter-IDs, Suche, Kombinationen | 9 |
+| `stats.test.js` | `computeStats` – met, house, mood, Kantenfälle | 9 |
+| `backup.test.js` | `importData` (valides JSON, Fehlerfälle) und `exportData` (Dateiname, Blob-Typ, Inhalt, URL-Freigabe) | 14 |
+
+Gesamt: **54 Tests** in 5 Dateien.
+
+#### Test-Setup
+
+`src/test/setup.js` registriert einen in-memory localStorage-Mock, da jsdom's eigene Implementierung nicht vollständig ist:
+
+```js
+const createLocalStorageMock = () => {
+  let store = {}
+  return {
+    getItem: (k) => store[k] ?? null,
+    setItem: (k, v) => { store[k] = String(v) },
+    removeItem: (k) => { delete store[k] },
+    clear: () => { store = {} },
+  }
+}
+Object.defineProperty(globalThis, 'localStorage', { value: createLocalStorageMock(), writable: true })
+```
+
+Die Konfiguration in `vite.config.js`:
+
+```js
+test: {
+  environment: 'jsdom',
+  globals: true,
+  setupFiles: ['./src/test/setup.js'],
+}
+```
+
+#### Neue Tests schreiben
+
+- Neue Utility-Funktionen in `src/utils/` bekommen eine eigene Testdatei in `src/__tests__/`.
+- Tests für `importData` nutzen echte `File`-Objekte: `new File([content], 'backup.json', { type: 'application/json' })` – kein Mock nötig, da jsdom `FileReader` unterstützt.
+- Tests für `exportData` mocken `document.createElement`, `URL.createObjectURL` und `URL.revokeObjectURL`, weil kein echtes Browser-Datei-System vorhanden ist.
+- Komponenten werden aktuell nicht gerendert (kein React Testing Library). Logik-Tests laufen über die Utility-Funktionen.
+
+#### CI
+
+Der GitHub Actions Workflow `.github/workflows/test.yml` führt `npm test` bei jedem Pull Request gegen `main` aus. Ein Merge ist erst möglich, wenn alle Tests grün sind.
+
 ### Neues Pokémon hinzufügen
 
 1. In `src/data/pokemon.js` einen neuen Eintrag ergänzen:
@@ -239,3 +334,69 @@ Die URL ist CORS-kompatibel und benötigt keine Authentifizierung.
 ### nationalId-Mapping ergänzen
 
 In `src/data/pokemon.js` den `nationalId`-Wert von `null` auf die korrekte nationale Pokédex-Nummer setzen. Sobald ein Wert gesetzt ist, erscheint die gepunktete Unterstreichung im Namen und das Sprite-Overlay ist aktiv.
+
+### Backup & Restore implementieren
+
+Die Backup-Logik liegt vollständig in `src/utils/backup.js` und `src/components/SettingsOverlay.jsx`.
+
+#### `exportData(data)`
+
+Erzeugt einen JSON-Blob aus dem übergebenen `data`-Objekt (pretty-printed mit 2 Leerzeichen Einrückung) und löst einen Browser-Download aus:
+
+```js
+const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+const url = URL.createObjectURL(blob)
+const a = document.createElement('a')
+a.href = url
+a.download = `pokopia-tracker-${new Date().toISOString().slice(0, 10)}.json`
+a.click()
+URL.revokeObjectURL(url)
+```
+
+Die Object-URL wird direkt nach dem Klick wieder freigegeben. Es werden keine Daten an einen Server gesendet.
+
+#### `importData(file)`
+
+Liest eine `File`-Instanz per `FileReader` und gibt ein `Promise` zurück. Das Promise wird rejected wenn:
+
+- die Datei kein gültiges JSON ist
+- der JSON-Root kein Objekt ist (Arrays, `null`, primitive Werte werden abgelehnt)
+- die Datei nicht gelesen werden kann
+
+```js
+importData(file).then(data => { /* validiertes Objekt */ }).catch(err => { /* Fehlermeldung */ })
+```
+
+#### `SettingsOverlay`-Komponente
+
+Props:
+
+| Prop | Typ | Beschreibung |
+| ---- | --- | ------------ |
+| `data` | `Object` | Aktueller App-State – wird direkt an `exportData` übergeben |
+| `onImport` | `(data) => void` | Callback nach erfolgreichem Import – in `App.jsx` ist das `setData` |
+| `onClose` | `() => void` | Schließt das Overlay |
+
+Das Datei-Input-Element ist per `display: none` versteckt und wird über `useRef` programmatisch per `.click()` geöffnet. Das verhindert, dass das Browserstandardelement sichtbar ist, während das native Datei-Auswahl-Dialogfeld trotzdem ausgelöst wird.
+
+Die Statusmeldung (`success` / `error`) wird nur nach einem Import-Versuch angezeigt und beim nächsten Öffnen nicht mehr gezeigt, da das Overlay beim Schließen ausgehängt wird.
+
+#### Datenfluss beim Import
+
+```text
+Datei auswählen → handleFileChange → importData(file) → onImport(parsed) → setData(parsed) → useEffect → saveData(data)
+```
+
+`onImport` ist in `App.jsx` direkt `setData`. Dadurch löst das bestehende `useEffect([data])` automatisch `saveData` aus – kein extra Speichern nötig.
+
+#### Teststrategie für Backup
+
+Die Tests liegen in `src/__tests__/backup.test.js` und nutzen echte `File`-Objekte statt Mocks:
+
+```js
+function makeFile(content, name = 'backup.json') {
+  return new File([content], name, { type: 'application/json' })
+}
+```
+
+Für `exportData` werden DOM-Methoden gemockt (`document.createElement`, `URL.createObjectURL`, `URL.revokeObjectURL`), da kein echter Browser-Download ausgelöst werden kann. Die Tests prüfen, ob der Anchor geklickt wird, ob der Dateiname das aktuelle Datum enthält, ob der Blob den richtigen MIME-Typ hat und ob die Object-URL nach dem Klick freigegeben wird.

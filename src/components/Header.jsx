@@ -46,7 +46,21 @@ function filterButtonStyle(isActive) {
   }
 }
 
-export default function Header({ metCount, houseCount, moodCount, totalPokemon, search, onSearchChange, filter, onFilterChange }) {
+const gearBtnStyle = {
+  marginLeft: 'auto',
+  background: 'none',
+  border: '1px solid rgba(255,255,255,0.2)',
+  borderRadius: 10,
+  color: 'rgba(255,255,255,0.7)',
+  fontSize: 18,
+  cursor: 'pointer',
+  padding: '5px 8px',
+  lineHeight: 1,
+  flexShrink: 0,
+  transition: 'all 0.15s',
+}
+
+export default function Header({ metCount, houseCount, moodCount, totalPokemon, search, onSearchChange, filter, onFilterChange, onSettingsOpen }) {
   return (
     <div style={HEADER_OUTER}>
       <div style={HEADER_INNER}>
@@ -56,6 +70,7 @@ export default function Header({ metCount, houseCount, moodCount, totalPokemon, 
             <h1 style={{ fontSize: 24, fontWeight: 800, color: "#fff", letterSpacing: "-0.5px" }}>Pokopia Tracker</h1>
             <p style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", marginTop: 2 }}>Deine Pokémon-Übersicht für alle Welten</p>
           </div>
+          <button style={gearBtnStyle} onClick={onSettingsOpen} title="Einstellungen">⚙️</button>
         </div>
 
         <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
