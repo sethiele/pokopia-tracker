@@ -4,6 +4,11 @@ Persönlicher Tracker für das Spiel **Pokopia** (Nintendo Switch). Die App hilf
 
 ---
 
+> [!IMPORTANT]
+> **Rechtlicher Hinweis:** Dieses Projekt ist ein inoffizielles, nicht kommerzielles Hilfsmittel für den privaten Gebrauch. Es besteht keine Verbindung zu und keine Unterstützung durch die Inhaber der genannten Marken. Pokopia, Pokémon, Nintendo sowie alle weiteren genannten Produkt- und Markennamen sind Eigentum ihrer jeweiligen Rechteinhaber.
+
+---
+
 ## Für Anwender
 
 ### Was kann die App?
